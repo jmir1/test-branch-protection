@@ -1,0 +1,24 @@
+# a github action that updates a file with the current time and
+# commits the change to the repo when manually triggered
+name: "Bot commit"
+
+on:
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Commit file
+        run: |
+          export time=$(date)
+          echo "Current time: $time" > time.txt
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add time.txt
+          git commit -m "The time is $time"
+          git push
