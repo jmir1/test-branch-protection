@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - name: Commit file
@@ -19,6 +20,11 @@ jobs:
           echo "Current time: $time" > time.txt
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+          git checkout -b time
           git add time.txt
           git commit -m "The time is $time"
-          git push
+          git push -u origin time
+      - name: create pull request
+        run: gh pr create -B main -H time --title 'Merge time into main' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
